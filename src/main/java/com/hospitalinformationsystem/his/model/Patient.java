@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 public class Patient {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long patientNumber;
 
     @Embedded
