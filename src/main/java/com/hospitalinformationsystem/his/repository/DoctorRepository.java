@@ -1,7 +1,10 @@
 package com.hospitalinformationsystem.his.repository;
 
 import com.hospitalinformationsystem.his.model.Doctor;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
+import java.util.List;
+
+public interface DoctorRepository extends EmployeeRepository<Doctor>  {
+    List<Doctor> findDoctorBySpeciality (String specialization);
+    public void deleteDoctorByEmployeeNumber(String employeeNumber);
 }
