@@ -18,7 +18,7 @@
      private Department department;
 
      @OneToOne
-     @JoinColumn(name = "supervisor_id", referencedColumnName = "EmployeeNumber")
+     @JoinColumn(name = "supervisor_id", referencedColumnName = "employeeNumber")
      private Nurse supervisor;
 
 

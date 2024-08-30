@@ -19,7 +19,7 @@
      private Ward ward;
 
      @ManyToOne
-     @JoinColumn(name = "doctor_id", referencedColumnName = "EmployeeNumber")
+     @JoinColumn(name = "doctor_id", referencedColumnName = "employeeNumber")
      private Doctor doctor;
 
      private Long bedNumber;

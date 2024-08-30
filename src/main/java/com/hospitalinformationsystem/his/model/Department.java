@@ -12,7 +12,7 @@
      private String building;
 
      @OneToOne
-     @JoinColumn(name = "director_id", referencedColumnName = "EmployeeNumber")
+     @JoinColumn(name = "director_id", referencedColumnName = "employeeNumber")
      private Doctor director;
 
      @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
