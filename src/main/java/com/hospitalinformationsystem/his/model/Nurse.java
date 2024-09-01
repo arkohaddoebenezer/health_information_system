@@ -17,6 +17,7 @@
 
      private Long salary;
      private String rotation;
+
      public Department getAssignedDepartment() {
          return assignedDepartment;
      }
