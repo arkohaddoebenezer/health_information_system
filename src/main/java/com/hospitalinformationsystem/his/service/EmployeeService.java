@@ -1,29 +1,38 @@
 package com.hospitalinformationsystem.his.service;
 
-import com.hospitalinformationsystem.his.model.Doctor;
-import com.hospitalinformationsystem.his.model.Employee;
-import com.hospitalinformationsystem.his.model.Nurse;
-import com.hospitalinformationsystem.his.repository.DoctorRepository;
-import com.hospitalinformationsystem.his.repository.NurseRepository;
+import com.hospitalinformationsystem.his.model.*;
+import com.hospitalinformationsystem.his.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // Import this
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class EmployeeService {
 
     private final DoctorRepository doctorRepository;
     private final NurseRepository nurseRepository;
+    private final HospitalizationRepository hospitalizationRepository;
+    private final DepartmentRepository departmentRepository;
+    private final WardRepository wardRepository;
+    private final Logger logger =Logger.getLogger(this.getClass().getName());
 
     @Autowired
-    public EmployeeService(DoctorRepository doctorRepository, NurseRepository nurseRepository) {
+    public EmployeeService(DoctorRepository doctorRepository, NurseRepository nurseRepository, HospitalizationRepository hospitalizationRepository, DepartmentRepository departmentRepository, WardRepository wardRepository) {
         this.doctorRepository = doctorRepository;
         this.nurseRepository = nurseRepository;
+        this.hospitalizationRepository = hospitalizationRepository;
+        this.departmentRepository = departmentRepository;
+        this.wardRepository = wardRepository;
     }
+
 
     public List<Employee> getAllEmployees() {
         List<Employee> employees = new ArrayList<>();
@@ -31,8 +40,9 @@ public class EmployeeService {
         employees.addAll(nurseRepository.findAll());
         return employees;
     }
-
-    public Optional<Employee> findEmployeeByEmployeeNumber(String employeeNumber) {
+    @Cacheable(cacheNames="employee", key="#employeeNumber")
+    public Optional<Employee> findEmployee(String employeeNumber) {
+        logger.info("get Employee from database: employeeNumber="+employeeNumber);
         Optional<Doctor> doctor = doctorRepository.findByEmployeeNumber(employeeNumber);
         if (doctor.isPresent()) return Optional.of(doctor.get());
 
@@ -41,20 +51,33 @@ public class EmployeeService {
         return Optional.empty();
     }
 
-    public List<Employee> findEmployeesByLastName(String lastName) {
+    public List<Employee> findEmployeesBySurname(String surname) {
         List<Employee> employees = new ArrayList<>();
-        employees.addAll(doctorRepository.findByLastName(lastName));
-        employees.addAll(nurseRepository.findByLastName(lastName));
+        employees.addAll(doctorRepository.findBySurname(surname));
+        employees.addAll(nurseRepository.findBySurname(surname));
         return employees;
     }
 
     @Transactional
+    @CacheEvict(value = "employee",key = "employeeNumber")
     public void deleteEmployeeByEmployeeNumber(String employeeNumber) {
+
         if (doctorRepository.existsByEmployeeNumber(employeeNumber)) {
-            System.out.println("Doctor exists");
+            Optional<Doctor> doctor = doctorRepository.findByEmployeeNumber(employeeNumber);
+            List<Hospitalization> relatedHospitalizations = hospitalizationRepository.findByDoctor(doctor);
+            for (Hospitalization hospitalization : relatedHospitalizations) {
+                hospitalization.setDoctor(null);
+                hospitalizationRepository.save(hospitalization);
+            }
+            Department departmentDirectedByDoctor = departmentRepository.findByDirector(doctor);
+            departmentDirectedByDoctor.setDirector(null);
+            departmentRepository.save(departmentDirectedByDoctor);
             doctorRepository.deleteByEmployeeNumber(employeeNumber);
         } else if (nurseRepository.existsByEmployeeNumber(employeeNumber)) {
-            System.out.println("Nurse exists");
+            Optional<Nurse> nurse = nurseRepository.findByEmployeeNumber(employeeNumber);
+            Ward wardSupervisedByNurse= wardRepository.findBySupervisor(nurse);
+            wardSupervisedByNurse.setSupervisor(null);
+            wardRepository.save(wardSupervisedByNurse);
             nurseRepository.deleteByEmployeeNumber(employeeNumber);
         }
     }

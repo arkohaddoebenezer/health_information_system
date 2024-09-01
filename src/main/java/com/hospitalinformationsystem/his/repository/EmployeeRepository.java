@@ -14,5 +14,5 @@ public interface EmployeeRepository<T extends Employee> extends JpaRepository<T,
     void deleteByEmployeeNumber(String employeeNumber);
     boolean existsByEmployeeNumber(String employeeNumber);
 
-    Collection<? extends Employee> findByLastName(String lastName);
+    Collection<? extends Employee> findBySurname(String lastName);
 }

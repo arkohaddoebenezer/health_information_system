@@ -1,17 +1,26 @@
  package com.hospitalinformationsystem.his.model;
-
- import com.mysql.cj.log.Log;
  import jakarta.persistence.*;
+ import jakarta.validation.constraints.NotBlank;
+ import jakarta.validation.constraints.NotNull;
+
 
  @Entity
  public class Ward{
-
      @Id
      private String wardID;
-
+     @NotNull(message = "Ward name is required")
+     @NotBlank(message = "Ward name cannot be empty")
      private String name;
+
+     @NotNull(message = "Ward number is required")
+     @NotBlank(message = "Ward number cannot be empty")
      private Long wardNumber;
+
+     @NotNull(message = "Number of beds required")
+     @NotBlank(message = "Number of beds cannot be empty")
      private Long numberOfBeds;
+
+     private Long availableBeds;
 
      @ManyToOne
      @JoinColumn(name = "department_code", referencedColumnName = "departmentCode")
@@ -68,5 +77,13 @@
 
      public void setSupervisor(Nurse supervisor) {
          this.supervisor = supervisor;
+     }
+
+     public Long getAvailableBeds() {
+         return availableBeds;
+     }
+
+     public void setAvailableBeds(Long availableBeds) {
+         this.availableBeds = availableBeds;
      }
  }

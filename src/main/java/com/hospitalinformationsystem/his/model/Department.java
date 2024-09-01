@@ -18,7 +18,6 @@
      @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
      private List<Ward> wards;
 
-     // Getters and Setters
      public Long getDepartmentCode() {
          return departmentCode;
      }

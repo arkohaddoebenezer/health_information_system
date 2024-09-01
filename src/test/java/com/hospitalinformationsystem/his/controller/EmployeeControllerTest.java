@@ -58,7 +58,7 @@ class EmployeeControllerTest {
         Employee employee = new Doctor();
         employee.setEmployeeNumber(employeeNumber);
 
-        when(employeeService.findEmployeeByEmployeeNumber(employeeNumber)).thenReturn(Optional.of(employee));
+        when(employeeService.findEmployee(employeeNumber)).thenReturn(Optional.of(employee));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/employees/findByEmployeeNumber/{employeeNumber}", employeeNumber))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -69,7 +69,7 @@ class EmployeeControllerTest {
     void testFindEmployeeByEmployeeNumber_NotFound() throws Exception {
         String employeeNumber = "123";
 
-        when(employeeService.findEmployeeByEmployeeNumber(employeeNumber)).thenReturn(Optional.empty());
+        when(employeeService.findEmployee(employeeNumber)).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/employees/findByEmployeeNumber/{employeeNumber}", employeeNumber))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
@@ -83,9 +83,9 @@ class EmployeeControllerTest {
         employee1.setSurname(lastName);
         employee2.setSurname(lastName);
 
-        when(employeeService.findEmployeesByLastName(lastName)).thenReturn(Arrays.asList(employee1, employee2));
+        when(employeeService.findEmployeesBySurname(lastName)).thenReturn(Arrays.asList(employee1, employee2));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/employees/findByLastName/{lastName}", lastName))
+        mockMvc.perform(MockMvcRequestBuilders.get("/employees/findBySurname/{lastName}", lastName))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(2));
     }

@@ -57,7 +57,7 @@ class EmployeeServiceTest {
 
         when(doctorRepository.findByEmployeeNumber(employeeNumber)).thenReturn(Optional.of(doctor));
 
-        Optional<Employee> result = employeeService.findEmployeeByEmployeeNumber(employeeNumber);
+        Optional<Employee> result = employeeService.findEmployee(employeeNumber);
         assertTrue(result.isPresent());
         assertEquals(employeeNumber, result.get().getEmployeeNumber());
         verify(doctorRepository, times(1)).findByEmployeeNumber(employeeNumber);
@@ -72,7 +72,7 @@ class EmployeeServiceTest {
 
         when(nurseRepository.findByEmployeeNumber(employeeNumber)).thenReturn(Optional.of(nurse));
 
-        Optional<Employee> result = employeeService.findEmployeeByEmployeeNumber(employeeNumber);
+        Optional<Employee> result = employeeService.findEmployee(employeeNumber);
         assertTrue(result.isPresent());
         assertEquals(employeeNumber, result.get().getEmployeeNumber());
         verify(doctorRepository, times(1)).findByEmployeeNumber(employeeNumber);
@@ -86,7 +86,7 @@ class EmployeeServiceTest {
         when(doctorRepository.findByEmployeeNumber(employeeNumber)).thenReturn(Optional.empty());
         when(nurseRepository.findByEmployeeNumber(employeeNumber)).thenReturn(Optional.empty());
 
-        Optional<Employee> result = employeeService.findEmployeeByEmployeeNumber(employeeNumber);
+        Optional<Employee> result = employeeService.findEmployee(employeeNumber);
         assertFalse(result.isPresent());
         verify(doctorRepository, times(1)).findByEmployeeNumber(employeeNumber);
         verify(nurseRepository, times(1)).findByEmployeeNumber(employeeNumber);
@@ -94,17 +94,17 @@ class EmployeeServiceTest {
 
     @Test
     void testFindEmployeesByLastName() {
-        String lastName = "Doe";
+        String surname = "Doe";
         Doctor doctor = new Doctor();
         Nurse nurse = new Nurse();
 
-        when(doctorRepository.findByLastName(lastName)).thenReturn((List) Arrays.asList(doctor));
-        when(nurseRepository.findByLastName(lastName)).thenReturn((List) Arrays.asList(nurse));
+        when(doctorRepository.findBySurname(surname)).thenReturn((List) Arrays.asList(doctor));
+        when(nurseRepository.findBySurname(surname)).thenReturn((List) Arrays.asList(nurse));
 
-        List<Employee> result = employeeService.findEmployeesByLastName(lastName);
+        List<Employee> result = employeeService.findEmployeesBySurname(surname);
         assertEquals(2, result.size());
-        verify(doctorRepository, times(1)).findByLastName(lastName);
-        verify(nurseRepository, times(1)).findByLastName(lastName);
+        verify(doctorRepository, times(1)).findBySurname(surname);
+        verify(nurseRepository, times(1)).findBySurname(surname);
     }
 
     @Test
