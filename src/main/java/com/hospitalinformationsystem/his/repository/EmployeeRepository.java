@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @NoRepositoryBean
-public interface EmployeeRepository<T extends Employee> extends JpaRepository<T, Long> {
+public interface EmployeeRepository<T extends Employee> extends JpaRepository<T, String> {
     Optional<T> findByEmployeeNumber(String employeeNumber);
     void deleteByEmployeeNumber(String employeeNumber);
     boolean existsByEmployeeNumber(String employeeNumber);

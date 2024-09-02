@@ -11,6 +11,7 @@
      private final DepartmentRepository departmentRepository;
 
      public DepartmentService(DepartmentRepository departmentRepository) {
+
          this.departmentRepository = departmentRepository;
      }
 
@@ -25,7 +26,7 @@
      }
 
 
-     public Department updateDepartment(int departmentId, Department departmentDetails) {
+     public Department updateDepartment(Long departmentId, Department departmentDetails) {
          Department department =  departmentRepository.findById(departmentId).orElse(null);
          if (department != null) {
              return departmentRepository.save(departmentDetails);
@@ -33,7 +34,7 @@
          return null;
      }
 
-     public void deleteDepartment(int id) {
+     public void deleteDepartment(Long id) {
          departmentRepository.deleteById(id);
      }
  }

@@ -7,7 +7,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // Import this
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +46,7 @@ public class EmployeeService {
         Optional<Doctor> doctor = doctorRepository.findByEmployeeNumber(employeeNumber);
         if (doctor.isPresent()) return Optional.of(doctor.get());
 
-        Optional<Nurse> nurse = nurseRepository.findByEmployeeNumber(employeeNumber);
+        Optional<Nurse> nurse = nurseRepository.findById(employeeNumber);
         if (nurse.isPresent()) return Optional.of(nurse.get());
         return Optional.empty();
     }
@@ -87,6 +87,7 @@ public class EmployeeService {
     }
 
     public Doctor saveDoctor(Doctor doctor) {
+        System.out.println("Save/Update Doctor");
         return doctorRepository.save(doctor);
     }
 

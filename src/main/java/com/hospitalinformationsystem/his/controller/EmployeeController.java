@@ -27,7 +27,7 @@ public class EmployeeController {
     public ResponseEntity<List<Employee>> getAllEmployees() {
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }
-
+    
     @GetMapping("/{employeeNumber}")
     @Cacheable(cacheNames="employee", key="#employeeNumber")
     public ResponseEntity<Employee> findEmployee(@PathVariable String employeeNumber) {
