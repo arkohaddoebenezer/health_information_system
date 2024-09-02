@@ -98,13 +98,13 @@ class EmployeeServiceTest {
         Doctor doctor = new Doctor();
         Nurse nurse = new Nurse();
 
-        when(doctorRepository.findByLastName(lastName)).thenReturn((List) Arrays.asList(doctor));
-        when(nurseRepository.findByLastName(lastName)).thenReturn((List) Arrays.asList(nurse));
+        when(doctorRepository.findBySurname(lastName)).thenReturn((List) Arrays.asList(doctor));
+        when(nurseRepository.findBySurname(lastName)).thenReturn((List) Arrays.asList(nurse));
 
-        List<Employee> result = employeeService.findEmployeesByLastName(lastName);
+        List<Employee> result = employeeService.findEmployeesBySurname(lastName);
         assertEquals(2, result.size());
-        verify(doctorRepository, times(1)).findByLastName(lastName);
-        verify(nurseRepository, times(1)).findByLastName(lastName);
+        verify(doctorRepository, times(1)).findBySurname(lastName);
+        verify(nurseRepository, times(1)).findBySurname(lastName);
     }
 
     @Test

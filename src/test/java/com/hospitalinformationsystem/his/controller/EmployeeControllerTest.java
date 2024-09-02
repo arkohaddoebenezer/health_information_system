@@ -83,7 +83,7 @@ class EmployeeControllerTest {
         employee1.setSurname(lastName);
         employee2.setSurname(lastName);
 
-        when(employeeService.findEmployeesByLastName(lastName)).thenReturn(Arrays.asList(employee1, employee2));
+        when(employeeService.findEmployeesBySurname(lastName)).thenReturn(Arrays.asList(employee1, employee2));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/employees/findByLastName/{lastName}", lastName))
                 .andExpect(MockMvcResultMatchers.status().isOk())

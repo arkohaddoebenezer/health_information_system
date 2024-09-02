@@ -6,5 +6,4 @@ import java.util.List;
 
 public interface DoctorRepository extends EmployeeRepository<Doctor>  {
     List<Doctor> findDoctorBySpeciality (String specialization);
-    public void deleteDoctorByEmployeeNumber(String employeeNumber);
 }

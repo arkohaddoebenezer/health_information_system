@@ -7,7 +7,7 @@ import com.hospitalinformationsystem.his.repository.DoctorRepository;
 import com.hospitalinformationsystem.his.repository.NurseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // Import this
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,18 +33,19 @@ public class EmployeeService {
     }
 
     public Optional<Employee> findEmployeeByEmployeeNumber(String employeeNumber) {
-        Optional<Doctor> doctor = doctorRepository.findByEmployeeNumber(employeeNumber);
+        System.out.println("Find employee by employee number: " + employeeNumber);
+        Optional<Doctor> doctor = doctorRepository.findById(employeeNumber);
         if (doctor.isPresent()) return Optional.of(doctor.get());
 
-        Optional<Nurse> nurse = nurseRepository.findByEmployeeNumber(employeeNumber);
+        Optional<Nurse> nurse = nurseRepository.findById(employeeNumber);
         if (nurse.isPresent()) return Optional.of(nurse.get());
         return Optional.empty();
     }
 
-    public List<Employee> findEmployeesByLastName(String lastName) {
+    public List<Employee> findEmployeesBySurname(String lastName) {
         List<Employee> employees = new ArrayList<>();
-        employees.addAll(doctorRepository.findByLastName(lastName));
-        employees.addAll(nurseRepository.findByLastName(lastName));
+        employees.addAll(doctorRepository.findBySurname(lastName));
+        employees.addAll(nurseRepository.findBySurname(lastName));
         return employees;
     }
 
@@ -64,6 +65,7 @@ public class EmployeeService {
     }
 
     public Doctor saveDoctor(Doctor doctor) {
+        System.out.println("Save/Update Doctor");
         return doctorRepository.save(doctor);
     }
 
