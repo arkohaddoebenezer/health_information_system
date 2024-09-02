@@ -16,7 +16,6 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-    @Autowired
     public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
@@ -26,6 +25,12 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }
 
+    @GetMapping("/{employeeNumber}")
+    public ResponseEntity<Employee> findEmployee(@PathVariable String employeeNumber) {
+        Optional<Employee> employee = employeeService.findEmployeeByEmployeeNumber(employeeNumber);
+        return employee.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
     @GetMapping("/findByEmployeeNumber/{employeeNumber}")
     public ResponseEntity<Employee> findEmployeeByEmployeeNumber(@PathVariable String employeeNumber) {
         Optional<Employee> employee = employeeService.findEmployeeByEmployeeNumber(employeeNumber);
@@ -33,9 +38,9 @@ public class EmployeeController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/findByLastName/{lastName}")
-    public List<Employee> findEmployeesByLastName(@PathVariable String lastName) {
-        return employeeService.findEmployeesByLastName(lastName);
+    @GetMapping("/findBySurname/{lastName}")
+    public List<Employee> findEmployeesBySurname(@PathVariable String lastName) {
+        return employeeService.findEmployeesBySurname(lastName);
     }
 
 
