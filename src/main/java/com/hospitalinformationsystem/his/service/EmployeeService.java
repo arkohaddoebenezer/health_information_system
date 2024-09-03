@@ -59,7 +59,7 @@ public class EmployeeService {
     }
 
     @Transactional
-    @CacheEvict(value = "employee",key = "employeeNumber")
+    @CacheEvict(value = "employee",key = "#employeeNumber")
     public void deleteEmployeeByEmployeeNumber(String employeeNumber) {
 
         if (doctorRepository.existsByEmployeeNumber(employeeNumber)) {
@@ -70,8 +70,10 @@ public class EmployeeService {
                 hospitalizationRepository.save(hospitalization);
             }
             Department departmentDirectedByDoctor = departmentRepository.findByDirector(doctor);
-            departmentDirectedByDoctor.setDirector(null);
-            departmentRepository.save(departmentDirectedByDoctor);
+            if (departmentDirectedByDoctor != null) {
+                departmentDirectedByDoctor.setDirector(null);
+                departmentRepository.save(departmentDirectedByDoctor);
+            }
             doctorRepository.deleteByEmployeeNumber(employeeNumber);
         } else if (nurseRepository.existsByEmployeeNumber(employeeNumber)) {
             Optional<Nurse> nurse = nurseRepository.findByEmployeeNumber(employeeNumber);
@@ -85,7 +87,7 @@ public class EmployeeService {
     public List<Doctor> findDoctorsBySpecialization(String specialization) {
         return doctorRepository.findDoctorBySpeciality(specialization);
     }
-
+    @CachePut(cacheNames="employee", key="#doctor.employeeNumber")
     public Doctor saveDoctor(Doctor doctor) {
         System.out.println("Save/Update Doctor");
         return doctorRepository.save(doctor);

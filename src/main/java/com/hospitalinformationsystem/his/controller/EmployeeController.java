@@ -29,7 +29,6 @@ public class EmployeeController {
     }
     
     @GetMapping("/{employeeNumber}")
-    @Cacheable(cacheNames="employee", key="#employeeNumber")
     public ResponseEntity<Employee> findEmployee(@PathVariable String employeeNumber) {
         Optional<Employee> employee = employeeService.findEmployee(employeeNumber);
         return employee.map(ResponseEntity::ok)
@@ -60,7 +59,6 @@ public class EmployeeController {
         return ResponseEntity.ok(updatedNurse);
     }
     @PutMapping("/doctors")
-    @CachePut(cacheNames="employee", key="#doctor.employeeNumber")
     public ResponseEntity<Doctor> updateDoctor(@Valid @RequestBody Doctor doctor) {
         Doctor updatedDoctor = employeeService.saveDoctor(doctor);
         return ResponseEntity.ok(updatedDoctor);
@@ -73,7 +71,6 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/delete/{employeeNumber}")
-    @CacheEvict(value = "employee",key = "employeeNumber")
     public ResponseEntity<Void> deleteEmployeeByEmployeeNumber(@PathVariable String employeeNumber) {
         employeeService.deleteEmployeeByEmployeeNumber(employeeNumber);
         return ResponseEntity.noContent().build();
