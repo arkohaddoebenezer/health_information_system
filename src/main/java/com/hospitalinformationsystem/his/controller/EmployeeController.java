@@ -3,7 +3,10 @@ import com.hospitalinformationsystem.his.model.Doctor;
 import com.hospitalinformationsystem.his.model.Employee;
 import com.hospitalinformationsystem.his.model.Nurse;
 import com.hospitalinformationsystem.his.service.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,23 +27,17 @@ public class EmployeeController {
     public ResponseEntity<List<Employee>> getAllEmployees() {
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }
-
+    
     @GetMapping("/{employeeNumber}")
     public ResponseEntity<Employee> findEmployee(@PathVariable String employeeNumber) {
-        Optional<Employee> employee = employeeService.findEmployeeByEmployeeNumber(employeeNumber);
-        return employee.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-    @GetMapping("/findByEmployeeNumber/{employeeNumber}")
-    public ResponseEntity<Employee> findEmployeeByEmployeeNumber(@PathVariable String employeeNumber) {
-        Optional<Employee> employee = employeeService.findEmployeeByEmployeeNumber(employeeNumber);
+        Optional<Employee> employee = employeeService.findEmployee(employeeNumber);
         return employee.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/findBySurname/{lastName}")
-    public List<Employee> findEmployeesBySurname(@PathVariable String lastName) {
-        return employeeService.findEmployeesBySurname(lastName);
+    @GetMapping("/findBySurname/{surname}")
+    public List<Employee> findEmployeesBySurname(@PathVariable String surname) {
+        return employeeService.findEmployeesBySurname(surname);
     }
 
 
@@ -51,26 +48,24 @@ public class EmployeeController {
 
 
     @PostMapping("/doctors")
-    public ResponseEntity<Doctor> createDoctor(@RequestBody Doctor doctor) {
-        System.out.println(doctor.getSurname());
+    public ResponseEntity<Doctor> createDoctor(@Valid @RequestBody Doctor doctor) {
         Doctor savedDoctor = employeeService.saveDoctor(doctor);
         return ResponseEntity.ok(savedDoctor);
     }
 
-
     @PutMapping("/nurses")
-    public ResponseEntity<Nurse> updateNurse(@RequestBody Nurse nurse) {
+    public ResponseEntity<Nurse> updateNurse(@Valid @RequestBody Nurse nurse) {
         Nurse updatedNurse = employeeService.saveNurse(nurse);
         return ResponseEntity.ok(updatedNurse);
     }
     @PutMapping("/doctors")
-    public ResponseEntity<Doctor> updateDoctor(@RequestBody Doctor doctor) {
+    public ResponseEntity<Doctor> updateDoctor(@Valid @RequestBody Doctor doctor) {
         Doctor updatedDoctor = employeeService.saveDoctor(doctor);
         return ResponseEntity.ok(updatedDoctor);
     }
 
     @PostMapping("/nurses")
-    public ResponseEntity<Nurse> createNurse(@RequestBody Nurse nurse) {
+    public ResponseEntity<Nurse> createNurse(@Valid @RequestBody Nurse nurse) {
         Nurse savedNurse = employeeService.saveNurse(nurse);
         return ResponseEntity.ok(savedNurse);
     }

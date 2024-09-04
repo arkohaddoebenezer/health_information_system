@@ -2,6 +2,7 @@
 
  import jakarta.persistence.*;
  import java.time.LocalDateTime;
+ import java.util.Date;
 
  @Entity
  public class Hospitalization {
@@ -24,7 +25,7 @@
 
      private Long bedNumber;
      private String diagnosis;
-     private LocalDateTime admissionDate;
+     private Date admissionDate;
      private LocalDateTime dischargeDate;
 
 
@@ -76,11 +77,11 @@
          this.diagnosis = diagnosis;
      }
 
-     public LocalDateTime getAdmissionDate() {
+     public Date getAdmissionDate() {
          return admissionDate;
      }
 
-     public void setAdmissionDate(LocalDateTime admissionDate) {
+     public void setAdmissionDate(Date admissionDate) {
          this.admissionDate = admissionDate;
      }
 

@@ -29,7 +29,6 @@
      @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
      private List<Ward> wards;
 
-
      public Long getDepartmentCode() {
          return departmentCode;
      }
