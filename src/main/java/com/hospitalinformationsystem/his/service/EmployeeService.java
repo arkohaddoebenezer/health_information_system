@@ -38,38 +38,39 @@ public class EmployeeService {
     }
 
     public List<Employee> getAllEmployees() throws ExecutionException, InterruptedException {
-        CompletableFuture<List<Doctor>> doctorsFuture = CompletableFuture.supplyAsync(doctorRepository::findAll);
-        CompletableFuture<List<Nurse>> nursesFuture = CompletableFuture.supplyAsync(nurseRepository::findAll);
+        CompletableFuture<List<Employee>> doctorsFuture =
+                CompletableFuture.supplyAsync(doctorRepository::findAll).thenApplyAsync(doctors -> new ArrayList<>(doctors));
+
+        CompletableFuture<List<Employee>> nursesFuture =
+                CompletableFuture.supplyAsync(nurseRepository::findAll).thenApplyAsync(nurses -> new ArrayList<>(nurses));
+
         List<Employee> employees = new ArrayList<>();
         employees.addAll(doctorsFuture.get());
         employees.addAll(nursesFuture.get());
+
         return employees;
     }
 
+
     @Cacheable(cacheNames = "employee", key = "#employeeNumber")
     public Optional<Employee> findEmployee(String employeeNumber) {
-        logger.info("Fetching employee from database: employeeNumber=" + employeeNumber);
 
-        // Initiate asynchronous calls to both repositories
         CompletableFuture<Optional<Doctor>> doctorFuture = CompletableFuture.supplyAsync(() -> doctorRepository.findByEmployeeNumber(employeeNumber));
         CompletableFuture<Optional<Nurse>> nurseFuture = CompletableFuture.supplyAsync(() -> nurseRepository.findByEmployeeNumber(employeeNumber));
 
-
         return (Optional<Employee>) doctorFuture.thenCombine(nurseFuture, (doctorOpt, nurseOpt) -> {
             if (doctorOpt.isPresent()) {
-                return Optional.of((Employee) doctorOpt.get());
-            }
+                return doctorOpt.map(Employee.class::cast);
+            } else if (nurseOpt.isPresent()) {
 
-            else if (nurseOpt.isPresent()) {
-                logger.info("Nurse found: employeeNumber=" + employeeNumber);
-                return Optional.of((Employee) nurseOpt.get());
-            }
-            else {
-                logger.info("No employee found: employeeNumber=" + employeeNumber);
+                return nurseOpt.map(Employee.class::cast);
+            } else {
+
                 return Optional.empty();
             }
         }).join();
     }
+
 
 
     public List<Employee> findEmployeesBySurname(String surname) {
