@@ -12,7 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class EmployeeService {
@@ -33,30 +37,54 @@ public class EmployeeService {
         this.wardRepository = wardRepository;
     }
 
-
-    public List<Employee> getAllEmployees() {
+    public List<Employee> getAllEmployees() throws ExecutionException, InterruptedException {
+        CompletableFuture<List<Doctor>> doctorsFuture = CompletableFuture.supplyAsync(doctorRepository::findAll);
+        CompletableFuture<List<Nurse>> nursesFuture = CompletableFuture.supplyAsync(nurseRepository::findAll);
         List<Employee> employees = new ArrayList<>();
-        employees.addAll(doctorRepository.findAll());
-        employees.addAll(nurseRepository.findAll());
+        employees.addAll(doctorsFuture.get());
+        employees.addAll(nursesFuture.get());
         return employees;
     }
-    @Cacheable(cacheNames="employee", key="#employeeNumber")
-    public Optional<Employee> findEmployee(String employeeNumber) {
-        logger.info("get Employee from database: employeeNumber="+employeeNumber);
-        Optional<Doctor> doctor = doctorRepository.findByEmployeeNumber(employeeNumber);
-        if (doctor.isPresent()) return Optional.of(doctor.get());
 
-        Optional<Nurse> nurse = nurseRepository.findById(employeeNumber);
-        if (nurse.isPresent()) return Optional.of(nurse.get());
-        return Optional.empty();
+    @Cacheable(cacheNames = "employee", key = "#employeeNumber")
+    public Optional<Employee> findEmployee(String employeeNumber) {
+        logger.info("Fetching employee from database: employeeNumber=" + employeeNumber);
+
+        // Initiate asynchronous calls to both repositories
+        CompletableFuture<Optional<Doctor>> doctorFuture = CompletableFuture.supplyAsync(() -> doctorRepository.findByEmployeeNumber(employeeNumber));
+        CompletableFuture<Optional<Nurse>> nurseFuture = CompletableFuture.supplyAsync(() -> nurseRepository.findByEmployeeNumber(employeeNumber));
+
+
+        return (Optional<Employee>) doctorFuture.thenCombine(nurseFuture, (doctorOpt, nurseOpt) -> {
+            if (doctorOpt.isPresent()) {
+                return Optional.of((Employee) doctorOpt.get());
+            }
+
+            else if (nurseOpt.isPresent()) {
+                logger.info("Nurse found: employeeNumber=" + employeeNumber);
+                return Optional.of((Employee) nurseOpt.get());
+            }
+            else {
+                logger.info("No employee found: employeeNumber=" + employeeNumber);
+                return Optional.empty();
+            }
+        }).join();
     }
+
 
     public List<Employee> findEmployeesBySurname(String surname) {
-        List<Employee> employees = new ArrayList<>();
-        employees.addAll(doctorRepository.findBySurname(surname));
-        employees.addAll(nurseRepository.findBySurname(surname));
-        return employees;
+
+        CompletableFuture<List<Employee>> doctorFuture = CompletableFuture.supplyAsync(() -> (List<Employee>) doctorRepository.findBySurname(surname));
+        CompletableFuture<List<Employee>> nurseFuture = CompletableFuture.supplyAsync(() -> (List<Employee>) nurseRepository.findBySurname(surname));
+
+        return doctorFuture.thenCombine(nurseFuture, (doctorList, nurseList) -> {
+            return Stream.concat(
+                    (doctorList != null ? doctorList.stream() : Stream.empty()),
+                    (nurseList != null ? nurseList.stream() : Stream.empty())
+            ).collect(Collectors.toList());
+        }).join();
     }
+
 
     @Transactional
     @CacheEvict(value = "employee",key = "#employeeNumber")

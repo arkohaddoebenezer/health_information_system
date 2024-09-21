@@ -15,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -36,7 +37,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void testGetAllEmployees() {
+    void testGetAllEmployees() throws ExecutionException, InterruptedException {
         Doctor doctor = new Doctor();
         Nurse nurse = new Nurse();
 

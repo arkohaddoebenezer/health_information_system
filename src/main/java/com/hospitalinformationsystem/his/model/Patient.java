@@ -23,9 +23,6 @@ public class Patient {
     @Nullable
     private String address;
 
-
-
-
     public Long getNumber() {
         return patientNumber;
     }
@@ -33,7 +30,6 @@ public class Patient {
     public void setNumber(Long number) {
         this.patientNumber = number;
     }
-
 
     public String getFirstname() {
         return firstname;
