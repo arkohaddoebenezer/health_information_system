@@ -1,8 +1,8 @@
 services:
   health-information-system:
-    container_name: health-information-system
+    # container_name: health-information-system
     image: health-information-system
-    build: .
+    build: .  
     ports:
       - 8081-9000:8080
     environment:
