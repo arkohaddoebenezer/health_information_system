@@ -47,7 +47,7 @@ public class EmployeeService {
         List<Employee> employees = new ArrayList<>();
         employees.addAll(doctorsFuture.get());
         employees.addAll(nursesFuture.get());
-
+logger.info("Retrieved all employees");
         return employees;
     }
 
@@ -65,7 +65,7 @@ public class EmployeeService {
 
                 return nurseOpt.map(Employee.class::cast);
             } else {
-
+                logger.severe("User Employee with number "+employeeNumber+" does not exist in our database");
                 return Optional.empty();
             }
         }).join();
