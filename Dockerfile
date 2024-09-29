@@ -1,39 +1,15 @@
-# syntax=docker/dockerfile:1
+# Use an official OpenJDK runtime as a parent image
+FROM openjdk:21-jdk-slim
 
-# Use the JDK for building the application
-FROM eclipse-temurin:21-jdk-jammy AS builsder
-
-# Set the working directory
-WORKDIR /build
-
-# Copy the Maven wrapper and pom.xml
-COPY mvnw .
-COPY .mvn/ .mvn/
-COPY pom.xml .
-
-# Copy the application source code
-COPY src ./src
-
-# Give execute permission to mvnw
-RUN chmod +x mvnw
-
-# Build the application
-RUN ./mvnw package -DskipTests
-
-# Use the JRE to run the application
-FROM eclipse-temurin:21-jre-jammy
-
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy the built JAR file from the builder stage
-COPY --from=builder /app/target/*.jar app.jar
 
-# Set environment variables
-ENV SPRING_PROFILES_ACTIVE=prod
+# Copy the JAR file into the container
+COPY target/*.jar app.jar
 
-# Expose the application port
-EXPOSE 8080
+# Expose the port the application runs on
+EXPOSE 8081
 
-# Command to run the application
+# Run the JAR file
 ENTRYPOINT ["java", "-jar", "app.jar"]
