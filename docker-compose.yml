@@ -1,17 +1,26 @@
 services:
   health-information-system:
-    # container_name: health-information-system
+    container_name: health-information-system
     image: health-information-system
-    build: .  
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - 8081-9000:8080
+      - "${APP_HOST_PORT}:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
+      - SPRING_DATA_MONGODB_DATABASE=${SPRING_DATA_MONGODB_DATABASE}
   mysql-server:
+    container_name: mysql_server
     image: mysql
-    container_name: mysql-server
     ports:
-      - 3307:3306
+      - "${MYSQL_HOST_PORT}:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=health_information_system
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    volumes:
+      - C:/Users/ITCompliance/Desktop/Docker/mysql_data:/var/lib/mysql
