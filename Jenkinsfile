@@ -49,4 +49,5 @@ pipeline {
         always {
             bat 'docker logout'
         }
+    }
 }
