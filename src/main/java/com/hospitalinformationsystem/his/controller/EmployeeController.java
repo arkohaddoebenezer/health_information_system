@@ -2,15 +2,12 @@ package com.hospitalinformationsystem.his.controller;
 import com.hospitalinformationsystem.his.model.Doctor;
 import com.hospitalinformationsystem.his.model.Employee;
 import com.hospitalinformationsystem.his.model.Nurse;
+import com.hospitalinformationsystem.his.repository.NurseRepository;
 import com.hospitalinformationsystem.his.service.EmployeeService;
 import jakarta.validation.Valid;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -19,9 +16,11 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping("/employees")
 public class EmployeeController {
     private final EmployeeService employeeService;
+    private final NurseRepository nurseRepository;
 
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, NurseRepository nurseRepository) {
         this.employeeService = employeeService;
+        this.nurseRepository = nurseRepository;
     }
 
     @GetMapping()
@@ -41,6 +40,10 @@ public class EmployeeController {
         return employeeService.findEmployeesBySurname(surname);
     }
 
+    @GetMapping("/nurses")
+    public List<Nurse> getNurses() {
+        return nurseRepository.findAll();
+    }
 
     @GetMapping("/doctors/findBySpecialization/{specialization}")
     public List<Doctor> findDoctorsBySpecialization(@PathVariable String specialization) {
