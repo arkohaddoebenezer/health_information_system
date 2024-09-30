@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: health_information_system
+spec:
+  replicas: 3  # Creates 3 instances (pods)
+  selector:
+    matchLabels:
+      app: health-information-system
+  template:
+    metadata:
+      labels:
+        app: health-information-system
+    spec:
+      containers:
+        - name: health-information-system
+          image: /my-java-app:latest  # Replace with your Docker image
+          ports:
+            - containerPort: 8080

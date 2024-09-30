@@ -52,6 +52,7 @@ logger.info("Retrieved all employees");
     }
 
 
+    @SuppressWarnings("unchecked")
     @Cacheable(cacheNames = "employee", key = "#employeeNumber")
     public Optional<Employee> findEmployee(String employeeNumber) {
 
