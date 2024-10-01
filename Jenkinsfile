@@ -1,45 +1,39 @@
 pipeline {
     agent any
 
-    environment {
-        GITHUB_REPO = 'https://github.com/arkohaddoebenezer/health_information_system.git'
-        DOCKERHUB_REPO = 'earkohaddo/jenkins'
-        IMAGE_NAME = 'health_information_system'
-        IMAGE_TAG = "v1.${env.BUILD_NUMBER}"
-    }
-
     tools{
         maven 'Maven'
-        jdk 'JDK'
+        jdk 'jdk21'
     }
 
     stages {
+
         stage('Checkout') {
             steps {
-                cleanWs()
-                git branch: 'jenkins', url: "${GITHUB_REPO}"
+                git branch: 'main', url: 'https://github.com/arkohaddoebenezer/health_information_system.git'
             }
         }
 
-        stage('Build') {
-            steps {
-               bat "mvn clean install"
-            }
-        }
-
-        stage('Build Docker Image') {
+        stage('Build with Maven') {
             steps {
                 script {
-                    docker.build("${DOCKERHUB_REPO}:${IMAGE_NAME}-${IMAGE_TAG}")
+                    sh './mvnw clean package -DskipTests'
                 }
             }
         }
 
-        stage('Push to DockerHub') {
+        stage('Run Tests') {
             steps {
                 script {
-                    bat 'docker login'
-                    bat "docker push ${DOCKERHUB_REPO}:${IMAGE_NAME}-${IMAGE_TAG}"
+                    sh './mvnw test'
+                }
+            }
+        }
+
+        stage('Build and Deploy docker image') {
+            steps {
+                script {
+                    sh 'docker-compose up -d --build'
                 }
             }
         }
@@ -47,7 +41,13 @@ pipeline {
 
     post {
         always {
-            bat 'docker logout'
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
