@@ -1,3 +1,16 @@
+package com.hospitalinformationsystem.his.controller;
+import com.hospitalinformationsystem.his.model.Doctor;
+import com.hospitalinformationsystem.his.model.Employee;
+import com.hospitalinformationsystem.his.model.Nurse;
+import com.hospitalinformationsystem.his.repository.NurseRepository;
+import com.hospitalinformationsystem.his.service.EmployeeService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/employees")
