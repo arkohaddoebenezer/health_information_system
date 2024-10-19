@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: Health Information System
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}/${DB_NAME}?useSSL=false
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      initialization-fail-timeout: 0
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  security:
+    user:
+      name: admin
+      password: admin
+      roles: ADMIN
+management:
+  endpoints:
+    web:
+      base-path: /manage
+server:
+  port: 8085
+  shutdown: graceful
+
+logging:
+  file:
+    name: application.log
+  level:
+    root: INFO

@@ -41,12 +41,10 @@ public class EmployeeController {
         return employeeService.findEmployeesBySurname(surname);
     }
 
-
     @GetMapping("/doctors/findBySpecialization/{specialization}")
     public List<Doctor> findDoctorsBySpecialization(@PathVariable String specialization) {
         return employeeService.findDoctorsBySpecialization(specialization);
     }
-
 
     @PostMapping("/doctors")
     public ResponseEntity<Doctor> createDoctor(@Valid @RequestBody Doctor doctor) {
